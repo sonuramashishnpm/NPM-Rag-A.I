@@ -1,130 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>NPM Edu A.I</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='NPMaistyle.css') }}">
-</head>
+  <head>
+    <title>NPM Edu A.I</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="url_for('static', filename='styles.css')" />
+  </head>
+  <body>
+    <header class="header">NPM Rag A.I</header>
 
-<body>
+    <video autoplay muted loop id="background-video">
+      <source src="https://npmexplorer.netlify.app" />
+    </video>
+    <div id="video-overlay"></div>
 
-<header class="header">NPM Edu A.I</header>
+    <main class="container">
+      <div class="card" style="margin-bottom: 20px">
+        <button onclick="product('Chat')">Chat</button>
+        <button onclick="product('use')">Use Your ORG RAG Chat</button>
+        <button onclick="product('develop')">Develop Rag Chat</button>
+      </div>
 
-<video autoplay muted loop id="background-video">
-  <source src="https://npmexplorer.netlify.app/NPM%20ai%20backgrond%20video.mp4">
-</video>
-<div id="video-overlay"></div>
+      <div class="card" id="card2" style="margin-bottom: 20px; display: none">
+        <div id="card8" style="display: none"><h2>Develop RAG Chat</h2></div>
+        <div id="card3" style="display: none"><h2>Use NPMAI Rag chat</h2></div>
 
-<main class="container">
+        <label><h4>Public or Private Visibility</h4></label>
+        <select id="tools" onchange="tab(this.value)">
+          <option value="publi">Public</option>
+          <option value="privat">Private</option></select
+        ><br /><br />
 
-  <h2>Ask Anything</h2>
-  <div id="chat-box" style="height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #ccc; background: rgba(0,0,0,0.5); color: white; white-space: pre-wrap;">
-  </div>
+        <section id="rag_dev_pv" style="display: none">
+          <label><h3>Secret User_name</h3></label>
+          <input
+            type="text"
+            id="secret_user"
+            placeholder="Enter a Secret User_name"
+          />
+        </section>
+      </div>
 
-  <div class="card">
+      <div id="card1">
+        <div
+          id="chat-box"
+          style="
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            white-space: pre-wrap;
+          "
+        ></div>
+      </div>
 
-    <label>Upload PDF</label>
-    <input type="file" id="pdf_file" accept=".pdf">
+      <div class="card">
+        <section id="sectioninput">
+          <label>Upload PDF(s)</label>
+          <input type="file" id="pdf_file" accept=".pdf" multiple /><br /><br />
 
-    <label>Upload Image</label>
-    <input type="file" id="image_file" accept=".png,.jpg,.jpeg">
+          <label>Upload Image(s)</label>
+          <input
+            type="file"
+            id="image_file"
+            accept=".png,.jpg,.jpeg"
+            multiple
+          /><br /><br />
 
-    <label>YouTube Link</label>
-    <input id="link" placeholder="Enter YouTube video link">
+          <label>YouTube Link</label>
+          <input id="link" placeholder="Enter YouTube video link" /><br /><br />
 
-    <label>Upload Local Video</label>
-    <input type="file" id="video_file" accept=".mp4">
+          <label>Upload Video(s)</label>
+          <input type="file" id="video_file" accept=".mp4" multiple />
+        </section>
 
-    <label>Knowledge Base Name</label>
-    <input id="db" placeholder="Knowledge Base Name">
+        <section id="section_input_db">
+          <label>Knowledge Base Name</label>
+          <input id="db" placeholder="Knowledge Base Name" /><br />
 
-    <label>Your Question</label>
-    <input id="question" placeholder="Your question">
+          <section id="section_input_quest">
+            <label>Your Question</label>
+            <input id="question" placeholder="Your question" />
+          </section>
+        </section>
+        <button onclick="ask()">Send</button>
+      </div>
+    </main>
 
-    <button onclick="ask()">Send</button>
+    <script>
+      let currentMode = "Chat";
 
-  </div>
+      function tab(val) {
+        document.getElementById("rag_dev_pv").style.display =
+          val === "privat" ? "block" : "none";
+      }
 
-</main>
-<script>
-function appendMessage(role, text) {
-  const chatBox = document.getElementById("chat-box");
-  const msgDiv = document.createElement("div");
-  msgDiv.style.marginBottom = "15px";
-  msgDiv.innerHTML = `<strong>${role}:</strong> ${text}`;
-  chatBox.appendChild(msgDiv);
-  chatBox.scrollTop = chatBox.scrollHeight; 
-}
-  
-async function ask() {
-  
-  
-  const fd = new FormData();
+      function product(product_name) {
+        currentMode = product_name;
+        const chat_c = document.getElementById("card1");
+        const develop_c = document.getElementById("card2");
+        const use_t = document.getElementById("card3");
+        const dev_t = document.getElementById("card8");
+        const inputs = document.getElementById("sectioninput");
+        const q_box = document.getElementById("section_input_quest");
 
-  const pdf = pdf_file.files[0];
-  const img = image_file.files[0];
-  const vid = video_file.files[0];
-  const yt  = link.value.trim();
+        develop_c.style.display = product_name === "Chat" ? "none" : "block";
 
-  let sources = [pdf, img, vid, yt].filter(x => x);
+        if (product_name === "Chat") {
+          inputs.style.display = "block";
+          q_box.style.display = "block";
+          use_t.style.display = "none";
+          dev_t.style.display = "none";
+        } else if (product_name === "use") {
+          use_t.style.display = "block";
+          dev_t.style.display = "none";
+          inputs.style.display = "none";
+          q_box.style.display = "block";
+        } else if (product_name === "develop") {
+          use_t.style.display = "none";
+          dev_t.style.display = "block";
+          inputs.style.display = "block";
+          q_box.style.display = "none";
+        }
+      }
 
-  if (sources.length === 0) {
-    alert("Please provide ONE source");
-    return;
-  }
+      function appendMessage(role, text) {
+        const chatBox = document.getElementById("chat-box");
+        const msgDiv = document.createElement("div");
+        msgDiv.style.marginBottom = "15px";
+        msgDiv.innerHTML = `<strong>${role}:</strong> ${text}`;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
 
-  if (sources.length > 1) {
-    alert("Please provide ONLY ONE source");
-    return;
-  }
+      async function ask() {
+        const fd = new FormData();
 
-  if (!db.value || !question.value) {
-    alert("DB name and question are required");
-    return;
-  }
-  appendMessage("You", question.value);
+        fd.append("DB_PATH", document.getElementById("db").value);
+        fd.append("query", document.getElementById("question").value);
+        fd.append("DB_Privacy", document.getElementById("tools").value);
+        fd.append("secret_key", document.getElementById("secret_user").value);
 
-  fd.append("DB_PATH", db.value);
-  fd.append("query", question.value);
+        const fileInputs = ["pdf_file", "image_file", "video_file"];
+        fileInputs.forEach((id) => {
+          const files = document.getElementById(id).files;
+          for (let i = 0; i < files.length; i++) {
+            fd.append("file", files[i]);
+          }
+        });
 
-  if (pdf) fd.append("file", pdf);
-  else if (img) fd.append("file", img);
-  else if (vid) fd.append("file", vid);
-  else if (yt) {
-    fd.append("link", yt);
-    fd.append("output_path", "yt_video.mp4"); // REQUIRED
-  }
+        const yt = document.getElementById("link").value.trim();
+        if (yt) {
+          fd.append("link", yt);
+          fd.append("output_path", "yt_video.mp4");
+        }
 
-  try {
-    const res = await fetch("/ask", {
-      method: "POST",
-      body: fd
-    });
+        let targetUrl = "/ask";
+        if (currentMode === "use") targetUrl = "/use";
+        if (currentMode === "develop") targetUrl = "/develop";
 
-    const text = await res.text(); // Read as text first
-    try {
-      const j = JSON.parse(text); // Try to turn it into JSON
+        appendMessage(
+          "You",
+          document.getElementById("question").value || "Uploading files..."
+        );
 
-      appendMessage("AI",j.response)
-    } catch (e) {
-      // If it's NOT JSON, show the HTML/Text error directly
-      console.error("Server returned non-JSON:", text);
-      response.innerText = "Server Error: received HTML instead of JSON.";
-    }
-  } catch (err) {
-    response.innerText = "Network Error: Could not connect to Flask.";
-  }
-
-}
-</script>
-
-</body>
+        try {
+          const res = await fetch(targetUrl, { method: "POST", body: fd });
+          const j = await res.json();
+          appendMessage("AI", j.response);
+        } catch (err) {
+          appendMessage("Error", "Could not connect to server.");
+        }
+      }
+    </script>
+  </body>
 </html>
-
-
-
-
-
-
-
-
