@@ -83,7 +83,7 @@ def use_vectordb():
         secret_key=secret_key,
         query=final_query
     )
-  elif DB_Privacy=="publi":
+  else:
     rag=Rag(
         DB_PATH=DB_PATH,
         public=True,
