@@ -139,7 +139,7 @@ def develop_rag():
     )
 
   response=rag.send()
-  return jsonify({"response":response})
+  return "DONE check by using the Chat"
 
 
 if __name__ == "__main__":
