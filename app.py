@@ -92,7 +92,7 @@ def use_vectordb():
     
   response=rag.vector_db_use()
   memory1.save_context(query,response)
-  return jsonify({"response":response})
+  return jsonify(response)
 
   
 @app.route("/develop",methods=["POST"])
